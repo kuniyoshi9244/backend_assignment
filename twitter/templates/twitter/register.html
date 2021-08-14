@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ja" dir="ltr">
+
+<head>
+<meta charset="utf-8">
+<title>新規登録画面</title>
+<link rel="stylesheet" href='{% static "css/style.css" %}'/>
+</head>
+
+<body>
+<h1>新規登録</h1>
+
+ {% if AccountCreate %}
+   <h1>登録完了!</h1>
+
+ {% else %}
+   <div class="reg">
+     <form enctype="multipart/form-data" method="post">
+       {% csrf_token %}
+       <table class="reg_form">
+       {{ user_form.as_table }}
+       </table>
+       <input class="btn" type="submit" name="" value="登録"> 
+     </form>
+   </div>
+ {% endif %}
+
+</body>
+</html>
