@@ -1,17 +1,11 @@
+{% extends "twitter/base.html" %}
 
-<!DOCTYPE html>
-{% load static %}
-<html lang="ja" dir="ltr">
-<head>
-<meta charset="utf-8">
-<title></title>
-<link rel="stylesheet" href='{% static "css/css/style.css" %}'/>
+{% block title %}ホーム画面{% endblock %}
 
-</head>
-<body>
- <h1>{{ user_name }}さんようこそ！！</h1>
+{% block content %}
+<h1>{{ request.user }}さんようこそ！！</h1>
 
- <p> ログアウトはこちらから：
-</p>
-</body>
-</html>
+<div>
+  <p> ログアウトはこちらから：</p>
+</div>
+{% endblock %}

@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView
 from django.contrib.auth.views import LoginView
@@ -19,8 +18,3 @@ class LoginView(LoginView):
 
 class HomeView(TemplateView,LoginRequiredMixin):
     template_name = 'twitter/home.html'
-
-    def get_context_data(self, **kwargs):
-            context = super().get_context_data(**kwargs)
-            context['user_name'] = self.request.user
-            return context
