@@ -1,0 +1,22 @@
+{% extends "twitter/base.html" %}
+
+{% block title %}ログイン画面{% endblock %}
+
+{% block content %}
+<h1>ログイン画面</h1>
+
+<div class="reg">
+  <form method="post" action="{% url 'login' %}">
+    {% csrf_token %}
+    <table class="reg_form"> 
+      {{form.as_table}}
+    </table>
+    <input type="submit" class="btn" value="Login">
+ </form>
+</div>
+<div>
+  <p class="message">アカウントをお持ちですか？：
+    <a href="{% url 'registeration' %}">アカウントを作成</a>
+  </p>
+</div>
+{% endblock %}

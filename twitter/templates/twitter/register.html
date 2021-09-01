@@ -1,25 +1,22 @@
-<!DOCTYPE html>
-{% load static %}
-<html lang="ja" dir="ltr">
+{% extends "twitter/base.html" %}
 
-<head>
-<meta charset="utf-8">
-<title>新規登録画面</title>
-<link rel="stylesheet" href='{% static "css/style.css" %}'/>
-</head>
+{% block title %}新規登録画面{% endblock %}
 
-<body>
+{% block content %}
 <h1>新規登録</h1>
 
-  <div class="reg">
-    <form enctype="multipart/form-data" method="post">
-      {% csrf_token %}
-      <table class="reg_form"> 
-        {{form.as_table}}
+<div class="reg">
+  <form method="post" action="{% url 'registeration' %}">
+    {% csrf_token %}
+    <table class="reg_form"> 
+      {{form.as_table}}
     </table>
-      <input class="btn" type="submit" name="" value="登録"> 
-    </form>
-  </div>
-
-</body>
-</html>
+    <input class="btn" type="submit" name="" value="登録"> 
+  </form>
+</div>
+<div>
+  <p class="message">アカウントを持っている方は：
+    <a href="{% url 'login' %}">ログイン画面</a>
+  </p>
+</div>
+{% endblock %}
