@@ -16,5 +16,5 @@ class LoginView(LoginView):
     template_name = 'twitter/login.html'
     success_url = reverse_lazy('home')
 
-class HomeView(TemplateView,LoginRequiredMixin):
+class HomeView(LoginRequiredMixin,TemplateView):
     template_name = 'twitter/home.html'
