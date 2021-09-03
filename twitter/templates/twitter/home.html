@@ -6,6 +6,8 @@
 <h1>{{ request.user }}さんようこそ！！</h1>
 
 <div>
-  <p> ログアウトはこちらから：</p>
+  <p> ログアウトはこちらから：
+    <a href="{% url 'logout' %}">ログアウト</a>
+  </p>
 </div>
 {% endblock %}
