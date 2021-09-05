@@ -7,4 +7,5 @@ urlpatterns = [
     path('login/', views.LoginView.as_view(), name='login'),
     path('logout/', av.LogoutView.as_view(), name='logout'),
     path('home/',views.HomeView.as_view(), name="home"),
+    path('tweet/',views.TweetView.as_view(), name="tweet"),
 ]

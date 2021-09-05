@@ -5,10 +5,10 @@
 {% block content %}
 <h1>ログイン画面</h1>
 
-<div class="reg">
+<div class="frame">
   <form method="post" action="{% url 'login' %}">
     {% csrf_token %}
-    <table class="reg_form"> 
+    <table class="login_form"> 
       {{form.as_table}}
     </table>
     <input type="submit" class="btn" value="Login">

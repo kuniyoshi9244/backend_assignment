@@ -1,28 +1,93 @@
-h1{
+/*共通部分*/
+h1, h2{
   text-align: center;
 }
 
-div.reg{
-  background-color: #EEEEEE;
+.frame{
+  background-color: #eeeeee;
   margin-left: 15%;
   margin-right: 15%;
 }
 
+.btn{
+  color: #fff;
+  background-color: #000033;
+  font-size: 1.0em;
+  padding: 10px 30px;
+  margin-left: 80%;
+}
+
+.btn:hover{
+color: #fff;
+background: #000099;
+}
+
+/*ユーザ登録画面*/
+.frame
 table.reg_form{
   width: 100%;
   border-spacing: 10px 30px;
   padding-left:20px;
 }
 
-.btn{
-    color: #fff;
-    background-color: #000033;
-    font-size: 1.0em;
-    padding: 10px 30px;
-    margin-left: 80%;
+/*ログイン画面*/
+.frame
+table.login_form{
+  width: 100%;
+  border-spacing: 10px 30px;
+  padding-left:20px;
 }
 
-.btn:hover{
+/*ホーム画面*/
+.tweet_frame{
+  background: #ffffff;
+  height: 500px;
+  overflow-y: scroll;
+  max-width: 600px;
+  margin-right : auto;
+  margin-left : auto;
+  font-size: 80%;
+  border: solid 1px #d4d1d1;
+}
+
+.tweet_frame .tweet{
+  width: auto;
+  border: solid 1px #d4d1d1;
+}
+
+.tweet_frame .tweet .user_name{
+  margin-right: 10px;
+}
+
+.tweet_btn{
   color: #fff;
-  background: #000099;
+  background-color: #000033;
+  margin-left: 80%;
+}
+
+.tweet_btn:hover{
+color: #fff;
+background: #000099;
+}
+
+/*ツイート画面*/
+.frame
+table.tweet_form{
+  width: 100%;
+  border-spacing: 10px 30px;
+  margin-right: auto;
+  margin-left: auto;
+  padding-left:20px;
+}
+
+.frame
+table.tweet_form
+td{
+  text-align: center;
+}
+
+.frame
+table.tweet_form
+.tweet_input_text{
+  width: 600px;
 }

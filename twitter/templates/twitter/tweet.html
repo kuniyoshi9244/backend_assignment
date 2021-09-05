@@ -1,0 +1,26 @@
+{% extends "twitter/base.html" %}
+
+{% block title %}ツイート画面{% endblock %}
+
+{% block content %}
+<h1>ツイート画面</h1>
+
+<div class="frame">
+  <form method="post" action="{% url 'tweet' %}">
+    {% csrf_token %}
+    <table class="tweet_form"> 
+      <th>ツイート内容</th>
+      <tr><td>{{form.tweet_text}}</td></tr>
+    </table>
+    <input class="btn" type="submit" name="" value="ツイートする"> 
+  </form>
+</div>
+<div>
+  <p class="message">ホーム画面はこちら：
+    <a href="{% url 'home' %}">ホーム画面</a>
+  </p>  
+  <p class="message">ログアウトはこちら：
+    <a href="{% url 'logout' %}">ログアウト</a>
+  </p>
+</div>
+{% endblock %}
