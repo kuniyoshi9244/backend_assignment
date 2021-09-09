@@ -19,13 +19,11 @@ class LoginView(LoginView):
     success_url = reverse_lazy('home')
 
 class HomeView(LoginRequiredMixin,ListView):
-#    model = Tweet
     template_name = 'twitter/home.html'
     context_object_name = 'tweet_list'
 
     def get_queryset(self):
-        """Return the last five published questions."""
-        return Tweet.objects.filter(user = self.request.user).order_by('-pub_date')
+        return Tweet.objects.select_related('user').filter(user = self.request.user).order_by('-pub_date')
 
 class  TweetView(LoginRequiredMixin,CreateView):
     form_class = TweetForm
