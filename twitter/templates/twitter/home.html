@@ -3,8 +3,22 @@
 {% block title %}ホーム画面{% endblock %}
 
 {% block content %}
-<h1>{{ request.user }}さんようこそ！！</h1>
+<h1>ホーム画面</h1>
+<h2>{{ request.user }}さんようこそ！！</h2>
 
+<div class="tweet_frame">
+  <div class="tweet">
+    <div><span>今どうしている？</span></div>
+    <div><a href="{% url 'tweet' %}"><button type="button" class = 'tweet_btn'>ツイートする</button></a></div>
+  </div>
+  {% for tweet in tweet_list %}
+  <div class="tweet">
+    <span class="user_name">{{ tweet.user }}</span>
+    <span class="pub_date">{{ tweet.pub_date }}</span>
+    <div class="tweet_text">{{ tweet.tweet_text }}</div> 
+  </div>
+  {% endfor %}
+</div>
 <div>
   <p> ログアウトはこちらから：
     <a href="{% url 'logout' %}">ログアウト</a>
