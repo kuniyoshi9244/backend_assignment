@@ -6,22 +6,32 @@
 <h1>ホーム画面</h1>
 <h2>{{ request.user }}さんようこそ！！</h2>
 
-<div class="tweet_frame">
-  <div class="tweet">
-    <div><span>今どうしている？</span></div>
-    <div><a href="{% url 'tweet' %}"><button type="button" class = 'tweet_btn'>ツイートする</button></a></div>
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 offset-md-3" style="height: 400px; overflow-y:scroll;">
+      <table class="table table-striped"> 
+        <thead class="thead-dark">
+          <tr>
+             <th class="th_search" colspan="2">ツイート内容</th>
+          </tr>
+        </thead>
+        <tr>
+          <td>
+            <span>今どうしている？</span>
+            <a href="{% url 'tweet' %}"><button type="button" class = "btn btn-primary btn-sm">ツイートする</button></a>
+          </td>
+        </tr>
+        {% for tweet in tweet_list %}
+        <tr>
+          <td>
+            <span class="user_name">{{ tweet.user.username }}</span>
+            <span class="pub_date">{{ tweet.pub_date }}</span>
+            <div class="tweet_text">{{ tweet.tweet_text }}</div> 
+          </td>
+        </tr>
+        {% endfor %}
+      </div>
+    </div>
   </div>
-  {% for tweet in tweet_list %}
-  <div class="tweet">
-    <span class="user_name">{{ tweet.user }}</span>
-    <span class="pub_date">{{ tweet.pub_date }}</span>
-    <div class="tweet_text">{{ tweet.tweet_text }}</div> 
-  </div>
-  {% endfor %}
-</div>
-<div>
-  <p> ログアウトはこちらから：
-    <a href="{% url 'logout' %}">ログアウト</a>
-  </p>
 </div>
 {% endblock %}
