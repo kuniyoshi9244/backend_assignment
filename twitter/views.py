@@ -94,7 +94,7 @@ class UserDetailView(LoginRequiredMixin,ListView):
 
         #選択したユーザのツイート情報
         #ソート条件：-投稿時間
-        return Tweet.objects.select_related('user').filter(pk = followee_pk).order_by('-pub_date')
+        return Tweet.objects.select_related('user').filter(user__pk = followee_pk).order_by('-pub_date')
 
 #フォロー用
 class FollowView(LoginRequiredMixin,TemplateView):
