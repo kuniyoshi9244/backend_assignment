@@ -4,7 +4,7 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls.base import reverse_lazy
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse
 from django.utils.http import urlencode
 from .models import User, Tweet, FollowRelation
@@ -76,7 +76,7 @@ class UserDetailView(LoginRequiredMixin,ListView):
         #選択したユーザのpkを取得
         followee_pk = self.request.GET.get('user_pk')
         #選択したユーザの情報を取得
-        followee = User.objects.get(pk=followee_pk)
+        followee = get_object_or_404(User, pk=followee_pk)
         #選択したユーザのユーザ情報をcontextに格納
         context['user'] = followee
         
@@ -102,7 +102,7 @@ class FollowView(LoginRequiredMixin,TemplateView):
         #フォローするユーザのユーザテーブルのpkを取得
         followee_pk = request.POST.get('followee_pk')
         #フォローするユーザのユーザ情報を取得
-        followee = User.objects.get(pk=followee_pk)
+        followee = get_object_or_404(User, pk=followee_pk)
         #フォロー関連テーブルに登録
         FollowRelation(follower=self.request.user, followee=followee).save()
 
@@ -117,8 +117,8 @@ class DeleteFollowView(LoginRequiredMixin,TemplateView):
     def post(self, request, **kwargs):
         #フォロー解除するユーザのユーザテーブルのpkを取得
         followee_pk = request.POST.get('followee_pk')
-        #フォロー解除すりユーザ情報を取得
-        followee = User.objects.get(pk=followee_pk)
+        #フォロー解除するユーザ情報を取得
+        followee = get_object_or_404(User, pk=followee_pk)
         #フォロー関連テーブルからレコード削除
         FollowRelation.objects.get(follower=self.request.user, followee=followee).delete()
 

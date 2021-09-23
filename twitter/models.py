@@ -17,4 +17,4 @@ class FollowRelation(models.Model):
     followee = models.ForeignKey(User, on_delete=models.CASCADE, related_name='follower_relation')
 
     class Meta:
-        unique_together = ('follower', 'followee')
+      models.UniqueConstraint(fields=['follower','followee'],name="follow_unique")
