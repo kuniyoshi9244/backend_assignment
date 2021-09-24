@@ -1,0 +1,46 @@
+{% extends "twitter/base.html" %}
+
+{% block title %}詳細画面{% endblock %}
+
+{% block content %}
+<h1>詳細画面</h1>
+<h2>{{ user.username}}</h2>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      {% if is_followed == '0'%}  
+      <form method="post" action="{% url 'follow'%}">
+          {% csrf_token %}
+          <input type="hidden" name="followee_pk" value={{user.pk}}> 
+          <input class = "btn btn-primary btn-sm" type="submit" value="フォローする"> 
+        </form>
+      {% else%} 
+        <form method="post" action="{% url 'delete_follow'%}">
+            {% csrf_token %}
+            <input type="hidden" name="followee_pk" value={{user.pk}}> 
+            <input class = "btn btn-danger btn-sm" type="submit" value="フォロー解除"> 
+          </form>
+      {% endif %}
+    </div>
+    <div class="col-md-6 offset-md-3" style="height: 400px; overflow-y:scroll;">
+      <table class="table table-striped"> 
+        <thead class="thead-dark">
+          <tr>
+              <th class="th_search" colspan="2">ツイート内容</th>
+          </tr>
+        </thead>
+        {% for tweet in tweet_list %}
+        <tr>
+          <td>
+            <span class="user_name">{{ tweet.user.username }}</span>
+            <span class="pub_date">{{ tweet.pub_date }}</span>
+            <div class="tweet_text">{{ tweet.tweet_text }}</div> 
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

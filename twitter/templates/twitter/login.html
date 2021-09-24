@@ -3,20 +3,22 @@
 {% block title %}ログイン画面{% endblock %}
 
 {% block content %}
+
 <h1>ログイン画面</h1>
 
-<div class="frame">
-  <form method="post" action="{% url 'login' %}">
-    {% csrf_token %}
-    <table class="login_form"> 
-      {{form.as_table}}
-    </table>
-    <input type="submit" class="btn" value="Login">
- </form>
-</div>
-<div>
-  <p class="message">アカウントをお持ちですか？：
-    <a href="{% url 'registeration' %}">アカウントを作成</a>
-  </p>
+<div class="container">
+  <div class="row">
+    <div class="col-md">
+      <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        <table class="login_form"> 
+          {{form.as_table}}
+        </table>
+        <div class="div_btn_login"> 
+          <input type="submit" class="btn btn-primary" value="Login">
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock %}
