@@ -26,7 +26,14 @@
           <td>
             <span class="user_name">{{ tweet.user.username }}</span>
             <span class="pub_date">{{ tweet.pub_date }}</span>
-            <div class="tweet_text">{{ tweet.tweet_text }}</div> 
+            <div class="tweet_text">{{ tweet.tweet_text }}</div>
+            <div class='favorite'>
+              {% if tweet in favorite_list %}
+              <button class="delete_favorite_tweet btn btn-danger btn-sm" value={{ tweet.pk }}>お気に入り登録済み</button>
+              {% else %}
+              <button class="favor_tweet  btn btn-primary btn-sm" value={{ tweet.pk }}>お気に入り登録</button>  
+              {% endif %}
+            </div>
           </td>
         </tr>
         {% endfor %}
