@@ -1,4 +1,4 @@
-from django.views.generic import ListView, TemplateView
+from django.views.generic import ListView, TemplateView, View
 from django.views.generic.edit import CreateView, DeleteView
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import AuthenticationForm
@@ -10,7 +10,7 @@ from django.utils.http import urlencode
 from .models import FavoriteRelation, User, Tweet, FollowRelation
 from .forms import UserCreationForm, TweetForm
 from django.db.models import Q
-from django.http import HttpResponse
+from django.http import JsonResponse
 
 # Create your views here.
 #ユーザ登録画面
@@ -112,9 +112,6 @@ class UserDetailView(LoginRequiredMixin,TemplateView):
 
         return context
 
-
-
-
 #フォロー用
 class FollowView(LoginRequiredMixin,TemplateView):
     def post(self, request, **kwargs):
@@ -196,25 +193,33 @@ class FavoriteTweetListView(LoginRequiredMixin,ListView):
             return FavoriteRelation.objects.select_related('favorite_user','favorite_tweet__user').filter(favorite_user = self.request.user).order_by('favorite_tweet__pub_date')
 
 #お気に入り登録用
-class FavorTweetView(LoginRequiredMixin,TemplateView):
+class RegisterFavoriteTweetView(LoginRequiredMixin,View):
     def post(self, request, **kwargs):
         #お気に入りするツイートのpkを取得
         tweet_pk = request.POST.get('tweet_pk')
         #お気に入りするツイートのインスタンスを取得
-        tweet = get_object_or_404(Tweet, pk=tweet_pk)
+        try:
+            tweet = Tweet.objects.get(pk=tweet_pk)
+        except Tweet.DoesNotExist:
+            return JsonResponse(data={},status=404)
+
         #お気に入り関連テーブルに登録
         FavoriteRelation(favorite_user=self.request.user, favorite_tweet=tweet).save()
 
-        return HttpResponse()
+        return JsonResponse(data={})
 
 #お気に入り削除用
-class DeleteFavoriteTweetView(LoginRequiredMixin,TemplateView):
+class DeleteFavoriteTweetView(LoginRequiredMixin,View):
     def post(self, request, **kwargs):
         #お気に入りから外すツイートのpkを取得
         tweet_pk = request.POST.get('tweet_pk')
         #お気に入りから外すツイートのインスタンスを取得
-        tweet = get_object_or_404(Tweet, pk=tweet_pk)
+        try:
+            tweet = Tweet.objects.get(pk=tweet_pk)
+        except Tweet.DoesNotExist:
+            return JsonResponse(data={},status=404)
+
         #お気に入り関連テーブルから削除
         FavoriteRelation.objects.get(favorite_user=self.request.user, favorite_tweet=tweet).delete()
 
-        return HttpResponse()
+        return JsonResponse(data={})

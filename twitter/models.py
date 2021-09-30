@@ -7,7 +7,7 @@ class User(AbstractUser):
       'User' , verbose_name='フォロー中のユーザー', through='FollowRelation', related_name='+', through_fields=('follower', 'followee')
     )
     favorite_tweets = models.ManyToManyField(
-      'Tweet' , verbose_name='お気に入りのツイート', through='FavoriteRelation', related_name='aaa', through_fields=('favorite_user', 'favorite_tweet')
+      'Tweet' , verbose_name='お気に入りのツイート', through='FavoriteRelation', related_name='favorite_user', through_fields=('favorite_user', 'favorite_tweet')
     )
 
 class Tweet(models.Model):

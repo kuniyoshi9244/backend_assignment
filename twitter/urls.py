@@ -15,6 +15,6 @@ urlpatterns = [
     path('follow/',views.FollowView.as_view(), name="follow"),
     path('delete_follow/',views.DeleteFollowView.as_view(), name="delete_follow"),
     path('favorite_tweet_list/',views.FavoriteTweetListView.as_view(), name="favorite_tweet_list"),
-    path('favor_tweet/',views.FavorTweetView.as_view(), name="favor_tweet"),
+    path('register_favorite_tweet/',views.RegisterFavoriteTweetView.as_view(), name="register_favorite_tweet"),
     path('delete_favorite_tweet/',views.DeleteFavoriteTweetView.as_view(), name="delete_favorite_tweet"),
     ]
