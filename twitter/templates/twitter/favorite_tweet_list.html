@@ -1,43 +1,41 @@
 {% extends "twitter/base.html" %}
 
-{% block title %}ホーム画面{% endblock %}
+{% block title %}お気に入り{% endblock %}
 
 {% block content %}
-<h1>ホーム画面</h1>
-<h2>{{ request.user }}さんようこそ！！</h2>
-
+<h1>お気に入り</h1>
 <div class="container">
+  <div class="row">
+    <div class="col-md">
+      <form method="get" action="{% url 'follow_user_list' %}">
+        <div class="div_btn_tweet">
+          <input name="search_username" value="{{ request.GET.search_username }}" type="text">
+          <button class="btn btn-primary" type="submit">検索する</button>
+        </div>
+      </form> 
+    </div>
+  </div>
   <div class="row">
     <div class="col-md-6 offset-md-3" style="height: 400px; overflow-y:scroll;">
       <table class="table table-striped"> 
         <thead class="thead-dark">
           <tr>
-             <th class="th_search" colspan="2">ツイート内容</th>
+            <th class="th_search" colspan="2">検索結果</th>
           </tr>
-        </thead>
-        <tr>
-          <td>
-            <span>今どうしている？</span>
-            <a href="{% url 'tweet' %}"><button type="button" class = "btn btn-primary btn-sm">ツイートする</button></a>
-          </td>
-        </tr>
-        {% for tweet in tweet_list %}
-        <tr>
-          <td>
-            <span class="user_name">{{ tweet.user.username }}</span>
-            <span class="pub_date">{{ tweet.pub_date }}</span>
-            <div class="tweet_text">{{ tweet.tweet_text }}</div>
-            <div class='favorite'>
-              {% if tweet in favorite_list %}
-              <button class="delete_favorite_tweet btn btn-danger btn-sm" value={{ tweet.pk }}>お気に入り登録済み</button>
-              {% else %}
-              <button class="favor_tweet  btn btn-primary btn-sm" value={{ tweet.pk }}>お気に入り登録</button>  
-              {% endif %}
-            </div>
-          </td>
-        </tr>
-        {% endfor %}
-      </div>
+          </tr>
+          {% for favorite_relation in favorite_relation_list %}
+          <tr>
+            <td>
+              <span class="user_name">{{ favorite_relation.favorite_tweet.user.username }}</span>
+              <span class="pub_date">{{ favorite_relation.favorite_tweet.pub_date }}</span>
+              <div class="tweet_text">{{ favorite_relation.favorite_tweet.tweet_text }}</div> 
+              <div class='favorite'>
+                <button class="delete_favorite_tweet btn btn-danger btn-sm" value={{ favorite_relation.favorite_tweet.pk }}>お気に入り登録済み</button>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+      </table>
     </div>
   </div>
 </div>
@@ -76,4 +74,3 @@
   });
 </script>
 {% endblock%}
-  
