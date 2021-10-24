@@ -11,17 +11,9 @@
   <div class="row">
     <div class="col-md-6 offset-md-3">
       {% if is_followed == '0'%}  
-      <form method="post" action="{% url 'follow'%}">
-          {% csrf_token %}
-          <input type="hidden" name="followee_pk" value={{user.pk}}> 
-          <input class = "btn btn-primary btn-sm" type="submit" value="フォローする"> 
-        </form>
+      <button class="follow btn btn-primary btn-sm" value={{ user.pk }}>フォローする</button>  
       {% else%} 
-        <form method="post" action="{% url 'delete_follow'%}">
-            {% csrf_token %}
-            <input type="hidden" name="followee_pk" value={{user.pk}}> 
-            <input class = "btn btn-danger btn-sm" type="submit" value="フォロー解除"> 
-          </form>
+      <button class="delete_follow btn btn-danger btn-sm" value={{ user.pk }}>フォロー解除</button>
       {% endif %}
     </div>
     <div class="col-md-6 offset-md-3" style="height: 400px; overflow-y:scroll;">
@@ -67,8 +59,11 @@
 
 {% block js%}
 <script>
+  var url_follow = "{% url 'follow'%}";
+  var url_delete_follow = "{% url 'delete_follow'%}";
   var url_register_favorite_tweet = "{% url 'register_favorite_tweet'%}";
   var url_delete_favorite_tweet = "{% url 'delete_favorite_tweet'%}";
 </script>
 <script src="{% static 'js/favorite.js' %}"></script>
+<script src="{% static 'js/follow.js' %}"></script>
 {% endblock%}

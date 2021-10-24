@@ -94,15 +94,12 @@ class UserDetailView(LoginRequiredMixin,TemplateView):
         followee_pk = self.request.GET.get('user_pk')
         #選択したユーザの情報を取得
         followee = get_object_or_404(User, pk=followee_pk)
-        #選択したユーザのユーザ情報をcontextに格納
-        context['user'] = followee
         
         #ユーザがフォロー済みか判別するフラグをcontextに追加
-        #１：フォロー済み、２：未フォロー
+        #１：フォロー済み、0：未フォロー
+        is_followed = '0'
         if FollowRelation.objects.select_related('follower','followee').filter(follower=self.request.user, followee=followee):
-            context['is_followed'] = '1'
-        else:
-            context['is_followed'] = '0'
+            is_followed = '1'
 
         #選択したユーザのpkを取得
         followee_pk = self.request.GET.get('user_pk')
@@ -113,14 +110,16 @@ class UserDetailView(LoginRequiredMixin,TemplateView):
         favorite_list = tweet_list.filter(favorite_tweet__favorite_user=self.request.user)
 
         context={
+            'user': followee,
+            'is_followed': is_followed,
             'tweet_list': tweet_list,
             'favorite_list': favorite_list,
         }
 
         return context
 
-#フォロー用
-class FollowView(LoginRequiredMixin,TemplateView):
+#お気に入り登録用
+class FollowView(LoginRequiredMixin,View):
     def post(self, request, **kwargs):
         #フォローするユーザのユーザテーブルのpkを取得
         followee_pk = request.POST.get('followee_pk')
@@ -129,11 +128,7 @@ class FollowView(LoginRequiredMixin,TemplateView):
         #フォロー関連テーブルに登録
         FollowRelation(follower=self.request.user, followee=followee).save()
 
-        #詳細画面にリダイレクト
-        redirect_url = reverse('user_detail')
-        parameters = urlencode(dict(user_pk=followee_pk))
-        url = f'{redirect_url}?{parameters}'
-        return redirect(url)
+        return JsonResponse(data={})
 
 #フォロー解除用
 class DeleteFollowView(LoginRequiredMixin,TemplateView):
@@ -145,11 +140,7 @@ class DeleteFollowView(LoginRequiredMixin,TemplateView):
         #フォロー関連テーブルからレコード削除
         FollowRelation.objects.get(follower=self.request.user, followee=followee).delete()
 
-        #詳細画面にリダイレクト
-        redirect_url = reverse('user_detail')
-        parameters = urlencode(dict(user_pk=followee_pk))
-        url = f'{redirect_url}?{parameters}'
-        return redirect(url)
+        return JsonResponse(data={})
 
 #フォロー画面
 class FollowUserListView(LoginRequiredMixin,ListView):
