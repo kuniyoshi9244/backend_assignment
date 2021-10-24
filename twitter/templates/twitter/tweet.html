@@ -8,12 +8,12 @@
 <div class="container">
   <div class="row">
     <div class="col-md">
+      <h2>ツイート内容</h2>
       <form method="post" action="{% url 'tweet' %}">
         {% csrf_token %}
-        <table class="tweet_form"> 
-          <th>ツイート内容</th>
-          <tr><td>{{form.tweet_text}}</td></tr>
-        </table>
+        <div class="tweet_text_area">
+          <textarea class="tweet_text" name="tweet_text"></textarea>
+        </div>
         <div class="div_btn_tweet">
           <input class = "btn btn-primary" type="submit" value="ツイートする"> 
         </div>

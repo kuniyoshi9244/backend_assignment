@@ -21,7 +21,7 @@
       <table class="table table-striped"> 
         <thead class="thead-dark">
           <tr>
-            <th class="th_search" colspan="2">検索結果</th>
+            <th class="th_search" colspan="2" style="	position: sticky;top: 0;">検索結果</th>
           </tr>
           </tr>
           {% for favorite_relation in favorite_relation_list %}
@@ -32,6 +32,18 @@
               <div class="tweet_text">{{ favorite_relation.favorite_tweet.tweet_text }}</div> 
               <div class='favorite'>
                 <button class="delete_favorite_tweet btn btn-danger btn-sm" value={{ favorite_relation.favorite_tweet.pk }}>お気に入り登録済み</button>
+              </div>
+              <div class="reply">
+                <form method="get" action="{% url 'reply' %}">
+                  <input type="hidden" name="tweet_pk" value={{ favorite_relation.favorite_tweet.pk }}>
+                  <button class="btn btn-primary btn-sm" type="submit">リプライ</button>
+                </form>
+              </div>
+              <div class="detail">
+                <form method="get" action="{% url 'tweet_detail' %}">
+                  <input type="hidden" name="tweet_pk" value={{ favorite_relation.favorite_tweet.pk }}>
+                  <button class="btn btn-primary btn-sm" type="submit">詳細</button>
+                </form>
               </div>
             </td>
           </tr>

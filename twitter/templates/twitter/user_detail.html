@@ -28,7 +28,7 @@
       <table class="table table-striped"> 
         <thead class="thead-dark">
           <tr>
-              <th class="th_search" colspan="2">ツイート内容</th>
+              <th class="th_search" colspan="2" style="	position: sticky;top: 0;">ツイート内容</th>
           </tr>
         </thead>
         {% for tweet in tweet_list %}
@@ -44,7 +44,18 @@
               <button class="favor_tweet  btn btn-primary btn-sm" value={{ tweet.pk }}>お気に入り登録</button>  
               {% endif %}
             </div>
- 
+            <div class="reply">
+              <form method="get" action="{% url 'reply' %}">
+                <input type="hidden" name="tweet_pk" value={{ tweet.pk }}>
+                <button class="btn btn-primary btn-sm" type="submit">リプライ</button>
+              </form>
+            </div>
+            <div class="detail">
+              <form method="get" action="{% url 'tweet_detail' %}">
+                <input type="hidden" name="tweet_pk" value={{ tweet.pk }}>
+                <button class="btn btn-primary btn-sm" type="submit">詳細</button>
+              </form>
+            </div>
           </td>
         </tr>
         {% endfor %}

@@ -1,0 +1,96 @@
+{% extends "twitter/base.html" %}
+{% load static %}
+
+{% block title %}ツイート詳細画面{% endblock %}
+
+{% block content %}
+<h1>ツイート詳細画面</h1>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 offset-md-3" style="height: 400px; overflow-y:scroll;">
+      <table class="table table-striped"> 
+        <thead class="thead-dark">
+          <tr>
+            <th class="th_search" colspan="2" style="	position: sticky;top: 0;">ツイート履歴</th>
+          </tr>
+        </thead>
+        {% for tweet in ancestor_tweet_list %}
+        <tr>
+          <td>
+            <span class="user_name">{{ tweet.user.username }}</span>
+            <span class="pub_date">{{ tweet.pub_date }}</span>
+            <div class="tweet_text">{{ tweet.tweet_text }}</div>
+            <div class='favorite'>
+              {% if tweet in favorite_list %}
+              <button class="delete_favorite_tweet btn btn-danger btn-sm" value={{ tweet.pk }}>お気に入り登録済み</button>
+              {% else %}
+              <button class="favor_tweet  btn btn-primary btn-sm" value={{ tweet.pk }}>お気に入り登録</button>  
+              {% endif %}
+            </div>
+            <div class="reply">
+              <form method="get" action="{% url 'reply' %}">
+                <input type="hidden" name="tweet_pk" value={{ tweet.pk }}>
+                <button class="btn btn-primary btn-sm" type="submit">リプライ</button>
+              </form>
+            </div>
+            <div class="detail">
+              <form method="get" action="{% url 'tweet_detail' %}">
+                <input type="hidden" name="tweet_pk" value={{ tweet.pk }}>
+                <button class="btn btn-primary btn-sm" type="submit">詳細</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}  
+      </table>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6 offset-md-3" style="height: 400px; overflow-y:scroll;">
+      <table class="table table-striped"> 
+        <thead class="thead-dark">
+          <tr>
+            <th class="th_search" colspan="2" style="	position: sticky;top: 0;">返信ツイート</th>
+          </tr>
+        </thead>
+        {% for tweet in descendant_tweet_list %}
+        <tr>
+          <td>
+            <span class="user_name">{{ tweet.descendant.user.username }}</span>
+            <span class="pub_date">{{ tweet.descendant.pub_date }}</span>
+            <div class="tweet_text">{{ tweet.descendant.tweet_text }}</div>
+            <div class='favorite'>
+              {% if tweet.descendant in favorite_list %}
+              <button class="delete_favorite_tweet btn btn-danger btn-sm" value={{ tweet.descendant.pk }}>お気に入り登録済み</button>
+              {% else %}
+              <button class="favor_tweet  btn btn-primary btn-sm" value={{ tweet.descendant.pk }}>お気に入り登録</button>  
+              {% endif %}
+            </div>
+            <div class="reply">
+              <form method="get" action="{% url 'reply' %}">
+                <input type="hidden" name="tweet_pk" value={{ tweet.descendant.pk }}>
+                <button class="btn btn-primary btn-sm" type="submit">リプライ</button>
+              </form>
+            </div>
+            <div class="detail">
+              <form method="get" action="{% url 'tweet_detail' %}">
+                <input type="hidden" name="tweet_pk" value={{ tweet.descendant.pk }}>
+                <button class="btn btn-primary btn-sm" type="submit">詳細</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}  
+      </table>
+    </div>
+  </div>
+{% endblock %}
+      
+{% block js%}
+  <script>
+    var url_register_favorite_tweet = "{% url 'register_favorite_tweet'%}";
+    var url_delete_favorite_tweet = "{% url 'delete_favorite_tweet'%}";
+  </script>
+  <script src="{% static 'js/favorite.js' %}"></script>
+{% endblock%}

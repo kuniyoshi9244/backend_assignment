@@ -7,12 +7,3 @@ class UserCreationForm(UserCreationForm):
   class Meta:
     model = User
     fields = ('username','password1','password2',) 
-
-class TweetForm(forms.ModelForm):
-  class Meta:
-    model = Tweet
-    fields = ('tweet_text',)
-
-    widgets = {
-      'tweet_text': forms.Textarea(attrs={'class':'tweet_input_text',}),
-    }
