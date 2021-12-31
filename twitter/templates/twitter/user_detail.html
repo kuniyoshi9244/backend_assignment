@@ -10,10 +10,10 @@
 <div class="container">
   <div class="row">
     <div class="col-md-6 offset-md-3">
-      {% if is_followed == '0'%}  
-      <button class="follow btn btn-primary btn-sm" value={{ user.pk }}>フォローする</button>  
-      {% else%} 
+      {% if is_followed %}  
       <button class="delete_follow btn btn-danger btn-sm" value={{ user.pk }}>フォロー解除</button>
+      {% else%} 
+      <button class="follow btn btn-primary btn-sm" value={{ user.pk }}>フォローする</button>  
       {% endif %}
     </div>
     <div class="col-md-6 offset-md-3" style="height: 400px; overflow-y:scroll;">

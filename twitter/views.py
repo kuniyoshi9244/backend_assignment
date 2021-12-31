@@ -42,10 +42,10 @@ class HomeView(LoginRequiredMixin,TemplateView):
         #お気に入り登録済みのツイートを取得
         favorite_list = tweet_list.filter(favorite_tweet__favorite_user=self.request.user)
 
-        context={
+        context.update({
             'tweet_list': tweet_list,
             'favorite_list': favorite_list,
-        }
+        })
         return context
         
 #ツイート用
@@ -56,11 +56,11 @@ class TweetView(LoginRequiredMixin,TemplateView):
         #ツイート時間を取得
         pub_date = timezone.now()
         #ツイートテーブルに登録
-        Tweet(user=self.request.user, pub_date=pub_date, tweet_text=request.POST.get('tweet_text')).save()
+        reply_tweet = Tweet.objects.create(user=self.request.user, pub_date=pub_date, tweet_text=request.POST.get('tweet_text'))
         #リプライツイートのpk取得
-        reply_pk = Tweet.objects.get(user=self.request.user, pub_date=pub_date, tweet_text=request.POST.get('tweet_text'))
+        reply_pk = reply_tweet.pk
         #閉包テーブルに登録
-        TweetClosure(ancestor=reply_pk,descendant=reply_pk,path_length='0').save()
+        TweetClosure.objects.create(ancestor=reply_pk,descendant=reply_pk,path_length='0')
         #詳細画面にリダイレクト
         return redirect('home')
 
@@ -95,12 +95,9 @@ class UserDetailView(LoginRequiredMixin,TemplateView):
         #選択したユーザの情報を取得
         followee = get_object_or_404(User, pk=followee_pk)
         
-        #ユーザがフォロー済みか判別するフラグをcontextに追加
-        #１：フォロー済み、0：未フォロー
-        is_followed = '0'
-        if FollowRelation.objects.select_related('follower','followee').filter(follower=self.request.user, followee=followee):
-            is_followed = '1'
-
+        #ユーザがフォロー済みか判別するフラグを取得
+        is_followed = FollowRelation.objects.filter(follower=self.request.user, followee=followee).exists()
+         
         #選択したユーザのpkを取得
         followee_pk = self.request.GET.get('user_pk')
         #選択したユーザのツイート情報
@@ -109,12 +106,12 @@ class UserDetailView(LoginRequiredMixin,TemplateView):
         #お気に入り登録済みのツイートを取得
         favorite_list = tweet_list.filter(favorite_tweet__favorite_user=self.request.user)
 
-        context={
+        context.update({
             'user': followee,
             'is_followed': is_followed,
             'tweet_list': tweet_list,
             'favorite_list': favorite_list,
-        }
+        })
 
         return context
 
@@ -229,22 +226,22 @@ class ReplyView(LoginRequiredMixin,TemplateView):
         #選択したユーザのpkを取得
         tweet_pk = self.request.GET.get('tweet_pk')
 
-        context={
+        context.update({
             'tweet_pk': tweet_pk,
-        }
+        })
 
         return context
     def post(self, request, **kwargs):
         #ツイート時間を取得
         pub_date = timezone.now()
         #ツイートテーブルに登録
-        Tweet(user=self.request.user, pub_date=pub_date, tweet_text=request.POST.get('tweet_text')).save()
+        Tweet.objects.create(user=self.request.user, pub_date=pub_date, tweet_text=request.POST.get('tweet_text'))
 
         #リプライツイートを取得
         reply_tweet = Tweet.objects.get(user=self.request.user, pub_date=pub_date, tweet_text=request.POST.get('tweet_text'))
 
         #自己参照レコードを閉包テーブルに登録
-        TweetClosure(ancestor=reply_tweet,descendant=reply_tweet,path_length='0').save()
+        TweetClosure.objects.create(ancestor=reply_tweet,descendant=reply_tweet,path_length='0')
 
         #リプライツイートの先祖ツイートを取得
         tweetclosures = TweetClosure.objects.select_related('descendant').filter(descendant__pk=request.POST.get('tweet_pk'))
@@ -282,9 +279,9 @@ class TweetDetailView(LoginRequiredMixin,TemplateView):
         #深さ1の子孫レコードを取得
         descendant_tweet_list = TweetClosure.objects.select_related('ancestor','descendant').filter(ancestor=tweet, path_length='1').order_by('descendant__pub_date')
 
-        context={
+        context.update({
             'ancestor_tweet_list': ancestor_tweet_list,
             'descendant_tweet_list': descendant_tweet_list,
             'favorite_list': favorite_list,
-        }
+        })
         return context
