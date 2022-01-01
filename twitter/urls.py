@@ -17,4 +17,6 @@ urlpatterns = [
     path('favorite_tweet_list/',views.FavoriteTweetListView.as_view(), name="favorite_tweet_list"),
     path('register_favorite_tweet/',views.RegisterFavoriteTweetView.as_view(), name="register_favorite_tweet"),
     path('delete_favorite_tweet/',views.DeleteFavoriteTweetView.as_view(), name="delete_favorite_tweet"),
+    path('reply/',views.ReplyView.as_view(), name="reply"),
+    path('tweet_detail/',views.TweetDetailView.as_view(), name="tweet_detail"),
     ]

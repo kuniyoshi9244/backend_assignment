@@ -1,4 +1,5 @@
 {% extends "twitter/base.html" %}
+{% load static %}
 
 {% block title %}ホーム画面{% endblock %}
 
@@ -12,7 +13,7 @@
       <table class="table table-striped"> 
         <thead class="thead-dark">
           <tr>
-             <th class="th_search" colspan="2">ツイート内容</th>
+             <th class="th_search" colspan="2" style="	position: sticky;top: 0;">ツイート内容</th>
           </tr>
         </thead>
         <tr>
@@ -34,9 +35,22 @@
               <button class="favor_tweet  btn btn-primary btn-sm" value={{ tweet.pk }}>お気に入り登録</button>  
               {% endif %}
             </div>
+            <div class="reply">
+              <form method="get" action="{% url 'reply' %}">
+                <input type="hidden" name="tweet_pk" value={{ tweet.pk }}>
+                <button class="btn btn-primary btn-sm" type="submit">リプライ</button>
+              </form>
+            </div>
+            <div class="detail">
+              <form method="get" action="{% url 'tweet_detail' %}">
+                <input type="hidden" name="tweet_pk" value={{ tweet.pk }}>
+                <button class="btn btn-primary btn-sm" type="submit">詳細</button>
+              </form>
+            </div>
           </td>
         </tr>
         {% endfor %}
+      </table>
       </div>
     </div>
   </div>
@@ -45,35 +59,9 @@
 
 {% block js%}
 <script>
-  $(document).on('click', '.favor_tweet', function(e){
-    $.ajax({
-      type : "POST",
-      url: "{% url 'register_favorite_tweet' %}",
-      data: {'tweet_pk': $(e.target).val()},
-      datatype: 'json',
-      success: function(){
-        $(e.target).replaceWith('<button class="delete_favorite_tweet  btn btn-danger btn-sm" value='+ $(e.target).attr('value') +'>お気に入り登録済み</button>')
-      },
-      error: function(){
-        alert('登録に失敗しました。');
-      }
-    });
-  });
-  
-  $(document).on('click', '.delete_favorite_tweet', function(e){
-    $.ajax({
-      type : "POST",
-      url: "{% url 'delete_favorite_tweet' %}",
-      data: {'tweet_pk': $(e.target).val()},
-      datatype: 'json',
-      success: function(){
-        $(e.target).replaceWith('<button class="favor_tweet  btn btn-primary btn-sm" value='+ $(e.target).attr('value') +'>お気に入り登録</button>')
-      },
-      error: function(){
-        alert('登録に失敗しました。');
-      }
-    });
-  });
+  var url_register_favorite_tweet = "{% url 'register_favorite_tweet'%}";
+  var url_delete_favorite_tweet = "{% url 'delete_favorite_tweet'%}";
 </script>
+<script src="{% static 'js/favorite.js' %}"></script>
 {% endblock%}
   

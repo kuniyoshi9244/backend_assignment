@@ -1,0 +1,26 @@
+{% extends "twitter/base.html" %}
+
+{% block title %}リプライ画面{% endblock %}
+
+{% block content %}
+<h1>リプライ画面</h1>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md">
+      <h2>リプライ内容</h2>
+      <form method="post" action="{% url 'reply' %}">
+        {% csrf_token %}
+        <div class="tweet_text_area">
+          <textarea class="tweet_text" name="tweet_text"></textarea>
+        </div>
+        <input type="hidden" name="tweet_pk" value={{ tweet_pk }}>
+        <input type="hidden" name="before_page" value={{ request.META.HTTP_REFERER }}>
+        <div class="div_btn_tweet">
+          <input class = "btn btn-primary" type="submit" value="リプライする"> 
+        </div>
+      </form>
+    <div>
+  <div>
+<div>
+{% endblock %}

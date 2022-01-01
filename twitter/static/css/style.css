@@ -28,14 +28,14 @@ table.login_form{
 }
 
 /*ホーム画面*/
-.tweet_frame{
-  background: #ffffff;
-  height: 500px;
-  overflow-y: scroll;
-  max-width: 600px;
-  margin-right : auto;
-  margin-left : auto;
-  border: solid 1px #d4d1d1;
+div.favorite{
+  float: left;  
+  margin-right: 15px;
+}
+
+div.reply{
+  float: left;  
+  margin-right: 15px;
 }
 
 .user_name{
@@ -43,9 +43,16 @@ table.login_form{
 }
 
 /*ツイート画面*/
-table.tweet_form{
+div.tweet_text_area{
+  text-align: center;
   margin-left: auto;
   margin-right: auto;
+}
+
+textarea {
+  resize: none;
+  width:300px;
+  height:200px;
 }
 
 .div_btn_tweet{

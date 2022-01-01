@@ -7,10 +7,11 @@ from django.urls.base import reverse_lazy
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse
 from django.utils.http import urlencode
-from .models import FavoriteRelation, User, Tweet, FollowRelation
-from .forms import UserCreationForm, TweetForm
+from .models import FavoriteRelation, User, Tweet, FollowRelation, TweetClosure
+from .forms import UserCreationForm
 from django.db.models import Q
 from django.http import JsonResponse
+from django.utils import timezone
 
 # Create your views here.
 #ユーザ登録画面
@@ -41,21 +42,25 @@ class HomeView(LoginRequiredMixin,TemplateView):
         #お気に入り登録済みのツイートを取得
         favorite_list = tweet_list.filter(favorite_tweet__favorite_user=self.request.user)
 
-        context={
+        context.update({
             'tweet_list': tweet_list,
             'favorite_list': favorite_list,
-        }
+        })
         return context
         
-#ツイート画面
-class  TweetView(LoginRequiredMixin,CreateView):
-    form_class = TweetForm
+#ツイート用
+class TweetView(LoginRequiredMixin,TemplateView):
     template_name = 'twitter/tweet.html'
-    success_url = reverse_lazy('home')
 
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
+    def post(self, request, **kwargs):
+        #ツイート時間を取得
+        pub_date = timezone.now()
+        #ツイートテーブルに登録
+        tweet = Tweet.objects.create(user=self.request.user, pub_date=pub_date, tweet_text=request.POST.get('tweet_text'))
+        #閉包テーブルに登録
+        TweetClosure.objects.create(ancestor=tweet,descendant=tweet,path_length='0')
+        #詳細画面にリダイレクト
+        return redirect('home')
 
 #ユーザ検索画面
 class SearchUserView(LoginRequiredMixin,ListView):
@@ -87,16 +92,10 @@ class UserDetailView(LoginRequiredMixin,TemplateView):
         followee_pk = self.request.GET.get('user_pk')
         #選択したユーザの情報を取得
         followee = get_object_or_404(User, pk=followee_pk)
-        #選択したユーザのユーザ情報をcontextに格納
-        context['user'] = followee
         
-        #ユーザがフォロー済みか判別するフラグをcontextに追加
-        #１：フォロー済み、２：未フォロー
-        if FollowRelation.objects.select_related('follower','followee').filter(follower=self.request.user, followee=followee):
-            context['is_followed'] = '1'
-        else:
-            context['is_followed'] = '0'
-
+        #ユーザがフォロー済みか判別するフラグを取得
+        is_followed = FollowRelation.objects.filter(follower=self.request.user, followee=followee).exists()
+         
         #選択したユーザのpkを取得
         followee_pk = self.request.GET.get('user_pk')
         #選択したユーザのツイート情報
@@ -105,15 +104,17 @@ class UserDetailView(LoginRequiredMixin,TemplateView):
         #お気に入り登録済みのツイートを取得
         favorite_list = tweet_list.filter(favorite_tweet__favorite_user=self.request.user)
 
-        context={
+        context.update({
+            'user': followee,
+            'is_followed': is_followed,
             'tweet_list': tweet_list,
             'favorite_list': favorite_list,
-        }
+        })
 
         return context
 
-#フォロー用
-class FollowView(LoginRequiredMixin,TemplateView):
+#お気に入り登録用
+class FollowView(LoginRequiredMixin,View):
     def post(self, request, **kwargs):
         #フォローするユーザのユーザテーブルのpkを取得
         followee_pk = request.POST.get('followee_pk')
@@ -122,11 +123,7 @@ class FollowView(LoginRequiredMixin,TemplateView):
         #フォロー関連テーブルに登録
         FollowRelation(follower=self.request.user, followee=followee).save()
 
-        #詳細画面にリダイレクト
-        redirect_url = reverse('user_detail')
-        parameters = urlencode(dict(user_pk=followee_pk))
-        url = f'{redirect_url}?{parameters}'
-        return redirect(url)
+        return JsonResponse(data={})
 
 #フォロー解除用
 class DeleteFollowView(LoginRequiredMixin,TemplateView):
@@ -138,11 +135,7 @@ class DeleteFollowView(LoginRequiredMixin,TemplateView):
         #フォロー関連テーブルからレコード削除
         FollowRelation.objects.get(follower=self.request.user, followee=followee).delete()
 
-        #詳細画面にリダイレクト
-        redirect_url = reverse('user_detail')
-        parameters = urlencode(dict(user_pk=followee_pk))
-        url = f'{redirect_url}?{parameters}'
-        return redirect(url)
+        return JsonResponse(data={})
 
 #フォロー画面
 class FollowUserListView(LoginRequiredMixin,ListView):
@@ -221,5 +214,72 @@ class DeleteFavoriteTweetView(LoginRequiredMixin,View):
 
         #お気に入り関連テーブルから削除
         FavoriteRelation.objects.get(favorite_user=self.request.user, favorite_tweet=tweet).delete()
-
         return JsonResponse(data={})
+
+#リプライ用
+class ReplyView(LoginRequiredMixin,TemplateView):
+    template_name = 'twitter/reply.html'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        #選択したユーザのpkを取得
+        tweet_pk = self.request.GET.get('tweet_pk')
+
+        context.update({
+            'tweet_pk': tweet_pk,
+        })
+
+        return context
+    def post(self, request, **kwargs):
+        #ツイート時間を取得
+        pub_date = timezone.now()
+        #ツイートテーブルに登録
+        Tweet.objects.create(user=self.request.user, pub_date=pub_date, tweet_text=request.POST.get('tweet_text'))
+
+        #リプライツイートを取得
+        reply_tweet = Tweet.objects.get(user=self.request.user, pub_date=pub_date, tweet_text=request.POST.get('tweet_text'))
+
+        #自己参照レコードを閉包テーブルに登録
+        TweetClosure.objects.create(ancestor=reply_tweet,descendant=reply_tweet,path_length='0')
+
+        #リプライツイートの先祖ツイートを取得
+        tweetclosures = TweetClosure.objects.select_related('descendant').filter(descendant__pk=request.POST.get('tweet_pk'))
+
+        #ツイート閉包テーブルに登録するレコードを作成
+        add_tweetclosures = [] 
+        for tweetclosure in tweetclosures:
+            element = TweetClosure(ancestor=tweetclosure.ancestor,descendant=reply_tweet,path_length=tweetclosure.path_length + 1)
+            add_tweetclosures.append(element)
+        
+        #ツイート閉包テーブルにレコードをまとめてインサート
+        TweetClosure.objects.bulk_create(add_tweetclosures)
+       
+        #リプライ画面の遷移前画面にリダイレクト        
+        return redirect(self.request.POST.get('before_page'))
+
+
+#ツイート詳細画面
+class TweetDetailView(LoginRequiredMixin,TemplateView):
+    template_name = 'twitter/tweet_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        #選択したツイートを取得
+        tweet_pk = self.request.GET.get('tweet_pk')
+        tweet = Tweet.objects.get(pk=tweet_pk)
+        
+        #先祖レコードを取得
+        ancestor_tweet_list = tweet.ancestor_tweets.all().order_by('pub_date')
+
+        #お気に入り登録済みのツイートを取得
+        favorite_list = Tweet.objects.filter(favorite_tweet__favorite_user=self.request.user)
+
+        #深さ1の子孫レコードを取得
+        descendant_tweet_list = TweetClosure.objects.select_related('ancestor','descendant').filter(ancestor=tweet, path_length='1').order_by('descendant__pub_date')
+
+        context.update({
+            'ancestor_tweet_list': ancestor_tweet_list,
+            'descendant_tweet_list': descendant_tweet_list,
+            'favorite_list': favorite_list,
+        })
+        return context
