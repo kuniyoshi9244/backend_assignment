@@ -56,11 +56,9 @@ class TweetView(LoginRequiredMixin,TemplateView):
         #ツイート時間を取得
         pub_date = timezone.now()
         #ツイートテーブルに登録
-        reply_tweet = Tweet.objects.create(user=self.request.user, pub_date=pub_date, tweet_text=request.POST.get('tweet_text'))
-        #リプライツイートのpk取得
-        reply_pk = reply_tweet.pk
+        tweet = Tweet.objects.create(user=self.request.user, pub_date=pub_date, tweet_text=request.POST.get('tweet_text'))
         #閉包テーブルに登録
-        TweetClosure.objects.create(ancestor=reply_pk,descendant=reply_pk,path_length='0')
+        TweetClosure.objects.create(ancestor=tweet,descendant=tweet,path_length='0')
         #詳細画面にリダイレクト
         return redirect('home')
 
